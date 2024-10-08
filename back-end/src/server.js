@@ -16,8 +16,15 @@ app.get('/products', (req, res) => {
   res.json(products);
 });
 
+function getCartIds(cartIds) {
+  return cartIds.map((cartId) =>
+    products.find((product) => product.id === cartId)
+  );
+}
+
 app.get('/cart', (req, res) => {
-  res.json(cartItems);
+  const cart = getCartIds(cartItems);
+  res.json(cart);
 });
 
 app.get('/products/:productId', (req, res) => {
@@ -29,16 +36,17 @@ app.get('/products/:productId', (req, res) => {
 // POST requests
 app.post('/cart', (req, res) => {
   const productId = req.body.id;
-  const product = products.find((product) => product.id === productId);
-  cartItems.push(product);
-  res.json(cartItems);
+  cartItems.push(productId);
+  const cart = getCartIds(cartItems);
+  res.json(cart);
 });
 
 // DELETE requests
 app.delete('/cart/:productId', (req, res) => {
   const productId = req.params.productId;
-  cartItems = cartItems.filter((product) => product.id !== productId);
-  res.json(cartItems);
+  cartItems = cartItems.filter((id) => id !== productId);
+  const cart = getCartIds(cartItems)
+  res.json(cart);
 });
 
 app.listen(PORT, () => {
